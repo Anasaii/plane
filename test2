@@ -5,7 +5,6 @@ import msvcrt
 import os
 from colored import fg
 
-skipFlag = False
 blue = fg('blue')
 red = fg('red')
 normal = fg('orchid_2')
@@ -15,8 +14,12 @@ gold = fg("gold_1")
 green = fg("green")
 pink = fg("hot_pink_2")
 
+skipFlag = False
+
+
 def clearText():
     os.system('cls' if os.name == 'nt' else 'clear')
+
 
 class SlowPrinter(threading.Thread):
     def __init__(self, text, speed=0.1):
@@ -27,13 +30,19 @@ class SlowPrinter(threading.Thread):
         self.last_char_index = -1
 
     def run(self):
-        for char in self.text:
-            if self.flag:
-                break
-            sys.stdout.write(char)
-            sys.stdout.flush()
-            self.last_char_index += 1
-            time.sleep(self.speed)
+            global skipFlag
+            if skipFlag == False:
+                for char in self.text:
+                    if self.flag:
+                        break
+                    sys.stdout.write(char)
+                    sys.stdout.flush()
+                    self.last_char_index += 1
+                    time.sleep(self.speed)
+            else:
+                print("muahaha skipped")
+                self.text = None
+                return self.text
 
     def get_remaining_text(self):
         return self.text[self.last_char_index+1:]
@@ -51,6 +60,10 @@ def slowprint(text, speed=0.05):
             break
         elif key == b'\x1b':
             exit()
+        elif key == b'x':
+            global skipFlag
+            skipFlag= True
+            break
 
 
     print()
@@ -67,57 +80,27 @@ def charSpeak(narLines):
         slowprint(pink + narLines[lines] + white, 0.001)
         lines += 1
 
-class threads():
-
-    def check_flag():
-        global skipFlag
-        while True:
-            key = msvcrt.getch()
-            if key == b'\t':
-                skipFlag= True
-                print("Skipped...")
-                break
-
-    flag_thread = threading.Thread(target=check_flag)
-    flag_thread.start()
-
 
 class game(): 
 
     def initialize():
         clearText()
 
-
-    def scene_0():
-        print("""
-                                    |
-                                    |
-                                  .-'-.
-                                 ' ___ '
-                       ---------'  .-.  '---------
-       _________________________'  '-'  '_________________________
-        ''''''-|---|--/    \==][^',_m_,'^][==/    \--|---|-''''''
-                      \    /  ||/   H   \||  \    /
-                       '--'   OO   O|O   OO   '--'
-""")
-
     def scene_1():
         narStart = ['Work work...', "Angelicaaaaa!", "wooork wooork", "ELIZAAAAA","and peggy!"]
         char1 = ["The Schihler Sisters!"]            
         narEnd = ["Angelica", "Peggy", "Eliza!!!"]
         
-        while not skipFlag:
+        try:
             narSpeak(narStart)
             charSpeak(char1)
             narSpeak(narEnd)
-            break
+        except:
+            print("You made it!")
         
-        scene_1_thread = threading.Thread(target=game.scene_1)
-        scene_1_thread.start
 
 
 
 
 game.initialize()
-game.scene_0()
 game.scene_1()
