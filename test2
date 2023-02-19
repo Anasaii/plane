@@ -105,11 +105,18 @@ class game():
         narStart = ['Work work...', "Angelicaaaaa!", "wooork wooork", "ELIZAAAAA","and peggy!"]
         char1 = ["The Schihler Sisters!"]            
         narEnd = ["Angelica", "Peggy", "Eliza!!!"]
-
-        if skipFlag == False:
+        
+        while not skipFlag:
             narSpeak(narStart)
             charSpeak(char1)
             narSpeak(narEnd)
+            break
+        
+        scene_1_thread = threading.Thread(target=game.scene_1)
+        scene_1_thread.start
+
+
+
 
 game.initialize()
 game.scene_0()

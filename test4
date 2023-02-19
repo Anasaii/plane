@@ -1,0 +1,36 @@
+import threading
+import time
+import keyboard
+
+exit_event = threading.Event() 
+
+def my_function():
+    messages = [
+        "Hello, world!",
+        "I like pizza!",
+        "The sky is blue",
+        "Python is awesome!",
+        "Goodbye, world!"
+    ]
+    for i, message in enumerate(messages):
+        if exit_event.is_set():
+            break
+        print(f"{i+1}. {message}")
+        time.sleep(1)
+    print("Exiting function...")
+
+def check_flag():
+    while True:
+        if keyboard.is_pressed('q'):
+            exit_event.set()
+            break
+
+# start the threads
+function_thread = threading.Thread(target=my_function)
+flag_thread = threading.Thread(target=check_flag)
+function_thread.start()
+flag_thread.start()
+
+# wait for the threads to complete
+function_thread.join()
+flag_thread.join()
