@@ -5,7 +5,7 @@ import msvcrt
 import os
 from colored import fg
 
-
+skipFlag = False
 blue = fg('blue')
 red = fg('red')
 normal = fg('orchid_2')
@@ -14,8 +14,6 @@ magenta = fg('magenta')
 gold = fg("gold_1")
 green = fg("green")
 pink = fg("hot_pink_2")
-
-
 
 def clearText():
     os.system('cls' if os.name == 'nt' else 'clear')
@@ -69,13 +67,50 @@ def charSpeak(narLines):
         slowprint(pink + narLines[lines] + white, 0.001)
         lines += 1
 
-clearText()
+class threads():
 
-narStart = ['Work work...', "Angelicaaaaa!", "wooork wooork", "ELIZAAAAA","and peggy!"]
-char1 = ["The Schihler Sisters!"]            
-narEnd = ["Angelica", "Peggy", "Eliza!!!"]
+    def check_flag():
+        global skipFlag
+        while True:
+            key = msvcrt.getch()
+            if key == b'\t':
+                skipFlag= True
+                print("Skipped...")
+                break
 
-narSpeak(narStart)
-charSpeak(char1)
-narSpeak(narEnd)
+    flag_thread = threading.Thread(target=check_flag)
+    flag_thread.start()
 
+
+class game(): 
+
+    def initialize():
+        clearText()
+
+
+    def scene_0():
+        print("""
+                                    |
+                                    |
+                                  .-'-.
+                                 ' ___ '
+                       ---------'  .-.  '---------
+       _________________________'  '-'  '_________________________
+        ''''''-|---|--/    \==][^',_m_,'^][==/    \--|---|-''''''
+                      \    /  ||/   H   \||  \    /
+                       '--'   OO   O|O   OO   '--'
+""")
+
+    def scene_1():
+        narStart = ['Work work...', "Angelicaaaaa!", "wooork wooork", "ELIZAAAAA","and peggy!"]
+        char1 = ["The Schihler Sisters!"]            
+        narEnd = ["Angelica", "Peggy", "Eliza!!!"]
+
+        if skipFlag == False:
+            narSpeak(narStart)
+            charSpeak(char1)
+            narSpeak(narEnd)
+
+game.initialize()
+game.scene_0()
+game.scene_1()
