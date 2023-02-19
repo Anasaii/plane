@@ -1,0 +1,39 @@
+import threading
+import time
+import sys
+
+class SlowPrinter(threading.Thread):
+    def __init__(self, text, speed=0.1):
+        threading.Thread.__init__(self)
+        self.text = text
+        self.flag = False
+        self.speed = speed
+        self.last_char_index = -1
+
+    def run(self):
+        for char in self.text:
+            if self.flag:
+                break
+            sys.stdout.write(char)
+            sys.stdout.flush()
+            self.last_char_index += 1
+            time.sleep(self.speed)
+
+    def get_remaining_text(self):
+        return self.text[self.last_char_index+1:]
+
+def print_slowly(text, speed=0.1):
+    slow_printer = SlowPrinter(text, speed)
+    slow_printer.start()
+
+    while True:
+        key = input()
+        if key == "":
+            slow_printer.flag = True
+            slow_printer.join()
+            print(slow_printer.get_remaining_text(), end='')
+            break
+
+if __name__ == '__main__':
+    text = "This is some slow typed text. Press Enter to make it print instantly."
+    print_slowly(text)
