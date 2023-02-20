@@ -59,10 +59,10 @@ def slowprint(text, speed=0.05):
             print(slow_printer.get_remaining_text(), end='')
             break
         elif key == b'\x1b':
-            exit()
+            sys.exit()
         elif key == b'x':
             global skipFlag
-            skipFlag= True
+            skipFlag = True
             break
 
 
@@ -87,6 +87,9 @@ class game():
         clearText()
 
     def scene_1():
+        global skipFlag
+        slowprint("uhhh will this work anyway?")
+        
         narStart = ['Work work...', "Angelicaaaaa!", "wooork wooork", "ELIZAAAAA","and peggy!"]
         char1 = ["The Schihler Sisters!"]            
         narEnd = ["Angelica", "Peggy", "Eliza!!!"]
@@ -95,8 +98,10 @@ class game():
             narSpeak(narStart)
             charSpeak(char1)
             narSpeak(narEnd)
-        except:
-            print("You made it!")
+        except Exception:
+            print(red + "Scene 1 skipped..." + white)
+            skipFlag = False
+            slowprint("um why is this is not working")
         
 
 
