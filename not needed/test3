@@ -107,7 +107,6 @@ class game():
         comb1 = [narStart, char1, narEnd]
 
         for x in comb1:
-            
             slowprint(comb1[x])
 
         #for x in enumerate():
