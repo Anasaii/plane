@@ -5,6 +5,7 @@ import msvcrt
 import os
 from colored import fg
 
+charColor = None
 blue = fg('blue')
 red = fg('red')
 normal = fg('orchid_2')
@@ -13,6 +14,7 @@ magenta = fg('magenta')
 gold = fg("gold_1")
 green = fg("green")
 pink = fg("hot_pink_2")
+colors = [blue, red, normal, white, magenta, gold, green, pink]
 
 skipFlag = False
 
@@ -68,18 +70,15 @@ def slowprint(text, speed=0.05):
 
     print()
 
-def narSpeak(narLines):
-    lines = 0
-    for x in narLines:
-        slowprint(green + narLines[lines] + white, 0.001)
-        lines += 1
 
-def charSpeak(narLines):
-    lines = 0
-    for x in narLines:
-        slowprint(pink + narLines[lines] + white, 0.001)
-        lines += 1
+def speak(lines, color, speed=0.1):
+    linesAmount = 0
+    for x in lines:
+        slowprint(color + lines[linesAmount] + white, speed)
+        linesAmount += 1
 
+def narSpeak(lines): speak(lines, green)
+def charSpeak(lines): speak(lines, charColor)
 
 class game(): 
 
@@ -99,13 +98,21 @@ class game():
             charSpeak(char1)
             narSpeak(narEnd)
         except Exception:
-            print(red + "Scene 1 skipped..." + white)
+            print(red + "Scene 1 finished..." + white)
             skipFlag = False
-            slowprint("um why is this is not working")
         
+    def chooseColor():
+        global charColor
+        charColor = input("Choose your color, brave hero: ")
+        if charColor in colors:
+            print("cool")
+        else:
+            slowprint("Color not in the list :(")
+            charColor = red
 
 
 
 
+print(blue)
 game.initialize()
 game.scene_1()
