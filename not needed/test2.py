@@ -18,7 +18,6 @@ colors = [blue, red, normal, white, magenta, gold, green, pink]
 
 skipFlag = False
 
-
 def clearText():
     os.system('cls' if os.name == 'nt' else 'clear')
 
@@ -61,7 +60,10 @@ def slowprint(text, speed=0.05):
             print(slow_printer.get_remaining_text(), end='')
             break
         elif key == b'\x1b':
+            time.sleep(0.5)
+            os.startfile(sys.argv[0])
             sys.exit()
+            
         elif key == b'x':
             global skipFlag
             skipFlag = True
@@ -114,5 +116,5 @@ class game():
 
 
 print(blue)
-game.initialize()
+#game.initialize()
 game.scene_1()

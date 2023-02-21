@@ -1,13 +1,12 @@
-import random
+import threading
+import time
 import sys
-import time
-from colored import fg
-import time
 import msvcrt
 import os
+from colored import fg
+import random
 
-
-
+charColor = None
 blue = fg('blue')
 red = fg('red')
 normal = fg('orchid_2')
@@ -15,16 +14,83 @@ white = fg('white')
 magenta = fg('magenta')
 gold = fg("gold_1")
 green = fg("green")
+pink = fg("hot_pink_2")
+colors = [blue, red, normal, white, magenta, gold, green, pink]
 
+skipFlag = False
 
-def clearCMDTEXT():
+def clearText():
     os.system('cls' if os.name == 'nt' else 'clear')
 
-def slowprint(s, speed=0.01):
+def slowprintLegacy(s, speed=0.1):
      for c in s + '\n':
         sys.stdout.write(c)
         sys.stdout.flush() # defeat buffering
         time.sleep(random.random() * speed)
+
+class SlowPrinter(threading.Thread):
+    def __init__(self, text, speed=0.1):
+        threading.Thread.__init__(self)
+        self.text = text
+        self.flag = False
+        self.speed = speed
+        self.last_char_index = -1
+
+    def run(self):
+            global skipFlag
+            if skipFlag == False:
+                for char in self.text:
+                    if self.flag:
+                        break
+                    sys.stdout.write(char)
+                    sys.stdout.flush()
+                    self.last_char_index += 1
+                    time.sleep(self.speed)
+            else:
+                print("muahaha skipped")
+                self.text = None
+                return self.text
+
+    def get_remaining_text(self):
+        return self.text[self.last_char_index+1:]
+
+def slowprint(text, speed=0.05):
+    slow_printer = SlowPrinter(text, speed)
+    slow_printer.start()
+
+    while True:
+        key = msvcrt.getch()
+        if key == b'\r':
+            slow_printer.flag = True
+            slow_printer.join()
+            print(slow_printer.get_remaining_text(), end='')
+            break
+        elif key == b'\x1b':
+            time.sleep(0.5)
+            quit
+            
+        elif key == b'x':
+            global skipFlag
+            skipFlag = True
+            break
+
+
+    print()
+
+
+def speak(lines, color, speed=0.1):
+    linesAmount = 0
+    for x in lines:
+        slowprint(color + lines[linesAmount] + white, speed)
+        linesAmount += 1
+
+def narSpeak(lines): speak(lines, green)
+def charSpeak(lines): speak(lines, charColor)
+
+class game(): 
+
+    def initialize():
+        clearText()
 
 def gameover():
     print(""" 
@@ -38,7 +104,7 @@ def gameover():
 
 def what():
     print(red +"===========================")
-    slowprint(red + "||----What do you do?----||", 0.01)
+    slowprintLegacy(red + "||----What do you do?----||", 0.01)
     print(red + "===========================" + white)
 
 def br():
@@ -77,7 +143,7 @@ def restart():
     print("Would you like to try again? (Y/N)")
     userDecision = (msvcrt.getch().decode('ASCII'))
     if userDecision == 'y':
-        clearCMDTEXT()
+        clearText()
         gameon()
     else:
         quit
@@ -297,8 +363,7 @@ def gameon():
         else:
             print(red + "Invalid option please try again." + white)
 
-    #restart()
+    restart()
 
 
 gameon()
-
